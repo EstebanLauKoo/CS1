@@ -1,0 +1,17 @@
+3 monsters
+
+Lime
+Rental
+Knightrola
+2
+
+Spin
+Rental
+Knightrola
+10
+
+Sparrow
+Pirate
+Tauroto
+5
+

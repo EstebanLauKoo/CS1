@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "memory": "c",
+        "streambuf": "c",
+        "xfacet": "c",
+        "xlocale": "c",
+        "xstring": "c",
+        "xutility": "c",
+        "editor.formatOnSave": "true",
+    }
+}
