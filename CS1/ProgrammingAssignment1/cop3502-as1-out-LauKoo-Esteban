@@ -1,1 +1,8 @@
-Hello World!, I should have 8 monsters.
+Id: 1 Monster: StAugustine  Element: Grass Population: 12
+Id: 2 Monster: Zoysia  Element: Grass Population: 8
+Id: 3 Monster: WholeWheat  Element: Bread Population: 6
+Id: 4 Monster: MultiGrain  Element: Bread Population: 10
+Id: 5 Monster: Rye  Element: Bread Population: 10
+Id: 6 Monster: Cinnamon  Element: Spice Population: 5
+Id: 7 Monster: Pepper  Element: Spice Population: 10
+Id: 8 Monster: Pumpkin  Element: Spice Population: 30
