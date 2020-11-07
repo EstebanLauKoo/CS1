@@ -241,7 +241,6 @@ void merge_sort_merge(int *list, int l1, int h1, int l2, int h2,
   for ( k = l1; k <= h1; k++) {
 
     if (pointer_left == half + 1) {
-
       auxArray[k] = list[pointer_right];
       pointer_right++;
     } else if ( pointer_right == h1 + 1 ) {
@@ -301,7 +300,7 @@ void merge_sort_recursive(int *list, int low_index, int high_index,
   //     pointer_left++;
   //   } else if ( list[pointer_left] < list[pointer_right]) {
   //     auxArray[k] = list[pointer_left];
-  //     pointer_left++;
+  //     pointer_left++;list[low_index].name
   //   } else {
   //     auxArray[k] = list[pointer_right];
   //     pointer_right++;
@@ -318,6 +317,36 @@ void merge_sort_recursive(int *list, int low_index, int high_index,
 void merge_insertion_sort_recursive(int *list, int low_index, int high_index, 
                                     int *comparisons, int *copies, int *block_copies, int *mallocs)
 {
+  // i want high index + 1 so that i can get back to in and check condition with n.
+
+  int n = high_index + 1;
+
+  if (high_index <= low_index) {
+
+ 
+    return;
+
+  }
+
+  if (n <= 25) {
+
+    insertion_sort_internal(list, n, comparisons, copies, block_copies);
+
+  }
+
+  else {
+
+  int half = (low_index + high_index) / 2;
+
+  // merge_sort_recursive(list, low_index, half, comparisons, copies, block_copies, mallocs);
+  // merge_sort_recursive(list, half + 1, high_index, comparisons, copies, block_copies, mallocs);
+
+  merge_insertion_sort_recursive(list, low_index, half, comparisons, copies, block_copies, mallocs);
+  merge_insertion_sort_recursive(list, half + 1, high_index, comparisons, copies, block_copies, mallocs);
+
+  merge_sort_merge(list, low_index, high_index, 0, 0, comparisons, copies, block_copies, mallocs);  
+
+  }
 
 }
 
@@ -400,7 +429,7 @@ int *make_some_integers(int n)
 /* Main program. */
 
 int main(void) {
-  int n = 20;
+  int n = 100;
   int *our_list = make_some_integers(n);
   int *our_unsorted_list = malloc(sizeof(int) * n);
 
@@ -421,13 +450,16 @@ int main(void) {
   // insertion_sort(our_unsorted_list, n);
   // output_integer_list(our_unsorted_list, n, "sorted values");
 
-  output_integer_list(our_list, n, "unsorted values");
+  // output_integer_list(our_list, n, "unsorted values");
   memcpy(our_unsorted_list, our_list, sizeof(int) * n);
   merge_sort(our_unsorted_list, n);
-  output_integer_list(our_unsorted_list, n, "sorted values");
+  // output_integer_list(our_unsorted_list, n, "sorted values");
+
 
   // memcpy(our_unsorted_list, our_list, sizeof(int) * n);
   // merge_insertion_sort(our_unsorted_list, n);
+  // output_integer_list(our_unsorted_list, n, "sorted values");
+
 
 
 

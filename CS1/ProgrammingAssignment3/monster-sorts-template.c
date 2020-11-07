@@ -42,6 +42,16 @@ monster *make_some_monsters(int n)
   return monsters;
 }
 
+void ofp_print(FILE *ofp, monster *list, int n) {
+
+  for(int i = 0; i < n; i++) {
+    
+    fprintf(ofp,"  Monster %d: %s %s %d %lf\n", i, list[i].name, list[i].element, list[i].population, list[i].weight);
+  }
+  fprintf(ofp,"\n");
+
+}
+
 void output_monster_list(monster *list, int n, char *title) {
   printf("List %s:\n", title);
   for(int i = 0; i < n; i++) {
@@ -63,6 +73,75 @@ void swap_monsters(monster *list, int i, int j)
   memcpy(list + j, &temp, sizeof(monster));
 }
 
+/* The core comparison function. */
+
+int compare_monsters(monster *m1, monster *m2, int use_name, int use_weight)
+{
+  // YOUR CODE GOES HERE.
+  if (use_weight == 1) {
+
+    if (m1->weight <= m2->weight) {
+
+      return 0;
+
+    }
+
+    else {
+
+      return 1;
+    
+    } 
+
+
+  }
+
+  // how to compare char strings?
+
+  else if (use_name == 1) {
+
+        char *s1 = m1->name;
+        char *s2 = m2->name;
+
+        char * tokens1 = strtok(s1, "Monster #");
+        char * tokens2 = strtok(s2, "Monster #");
+
+
+        int s1Atoi = atoi(tokens1);
+        int s2Atoi = atoi(tokens2);
+
+  if (use_name == 1) {
+
+
+    if (s1Atoi <= s2Atoi) {
+
+      return 0;
+
+    }
+
+    else {
+
+      return 1;
+    
+    }
+
+      
+  } 
+
+  else {
+
+    printf("incorrect arguments for the compare monsters\n");
+
+    return 0;
+
+  }
+
+  return 0;
+
+
+}
+
+}
+
 void check_monster_sort(monster *list, int n, int use_name, int use_weight)
 {
   for(int i = 1; i < n; i++) {
@@ -76,10 +155,7 @@ void check_monster_sort(monster *list, int n, int use_name, int use_weight)
 
 /* The core comparison function. */
 
-int compare_monsters(monster *m1, monster *m2, int use_name, int use_weight)
-{
-  // YOUR CODE GOES HERE.
-}
+
 
 /* Implement ascending quick sort. */
 
@@ -131,6 +207,70 @@ void bubble_sort(monster *list, int n, int use_name, int use_weight)
   start_cpu = clock();
 
   // YOUR CODE GOES HERE.
+  if (use_weight == 1 ) {
+    for(i = n-1; i >= 0; i--)
+    {
+      for(j = 0; j < i; j++)
+      {
+        comparisons++;
+        if(list[j].weight > list[j+1].weight) // Are our elements out of order?
+        {
+          swaps++;
+          swap_monsters(list, j, j+1);
+        }
+      }
+  }
+    
+
+  }
+
+  else if (use_name == 1) {
+
+    
+
+    for(i = n-1; i >= 0; i--)
+    {
+      for(j = 0; j < i; j++)
+      {
+        char *s1 = list[j].name;
+        char *s2 = list[j + 1].name;
+
+        char * tokens1 = strtok(s1, "Monster #");
+        char * tokens2 = strtok(s2, "Monster #");
+
+
+        int s1Atoi = atoi(tokens1);
+        int s2Atoi = atoi(tokens2);
+
+        comparisons++;
+
+      if(s1Atoi > s2Atoi) 
+      {
+        swaps++;
+        swap_monsters(list, j, j+1);
+      }
+
+        // int ret = strcmp(list[j].name, list[j+1].name);
+
+        //   if (ret > 0) {
+        //   swaps++;
+        //   swap_monsters(list, j+1, j);
+          
+        //   }
+        
+      }
+  }
+
+
+
+  }
+
+  else {
+
+    printf("incorrect arguments passed to bubble sort\n");
+
+  }
+
 
   end_cpu = clock();
   printf("Sort complete with %d comparisons and %d swaps.\n", comparisons, swaps);
@@ -141,6 +281,61 @@ void bubble_sort(monster *list, int n, int use_name, int use_weight)
 
 int find_highest(monster *list, int n, int *comparisons, int use_name, int use_weight)
 {
+
+  if (use_weight == 1 ) {
+
+  double highest_val = INT_MIN;
+  int highest_loc = -1;
+  int i;
+  
+  for(i = 0; i <= n; i++)
+  {
+    (*comparisons)++;
+    if(list[i].weight > highest_val)
+    {
+      highest_loc = i;
+      highest_val = list[i].weight;
+    }
+  }
+
+  return highest_loc; 
+    
+
+  }
+
+  else if (use_name == 1) {
+
+    int highest_val = INT_MIN;
+    int highest_loc = -1;
+    int i;
+
+
+    for(i = 0; i <= n; i++)
+    {
+      (*comparisons)++;
+
+      char *s1 = list[i].name;
+      char * tokens1 = strtok(s1, "Monster #");
+      int s1Atoi = atoi(tokens1);
+
+      if(s1Atoi > highest_val)
+      {
+        highest_loc = i;
+        highest_val = s1Atoi;
+      }
+    }
+
+    return highest_loc; 
+      
+
+  }
+
+  else {
+
+    printf("incorrect arguments passed to find_highest \n");
+
+  }
+  
   // YOUR CODE GOES HERE.
 }
 
@@ -159,6 +354,16 @@ void selection_sort(monster *list, int n, int use_name, int use_weight)
 
   // YOUR CODE GOES HERE.
 
+  for(i = n-1; i >= 0; i--)
+  {
+    highest = find_highest(list, i, &comparisons, use_name, use_weight);
+    if(highest != i)
+    {
+      swaps++;
+      swap_monsters(list, highest, i);
+    }
+  }  
+
   end_cpu = clock();
   printf("Sort complete with %d comparisons and %d swaps.\n", comparisons, swaps);
   print_clocks(end_cpu - start_cpu);
@@ -169,6 +374,84 @@ void selection_sort(monster *list, int n, int use_name, int use_weight)
 int insertion_sort_find_position(monster *list, int low_index, int high_index, monster *k, int *comparisons, int use_name, int use_weight)
 {
   // YOUR CODE GOES HERE.
+
+  if (use_weight == 1 ) {
+
+    low_index = high_index - 1;
+
+    // printf("%f %f \n", list[low_index].weight, k->weight);
+
+    while (low_index >= 0 && list[low_index].weight > k->weight) {
+
+        // printf("%f > %f \n", list[low_index].weight, k->weight);
+
+        (*comparisons)++;
+        list[low_index + 1] = list[low_index]; 
+        low_index = low_index - 1;
+      
+    }
+
+
+
+    list[low_index + 1] = *k;
+
+  }
+
+  else if (use_name == 1) {
+
+    low_index = high_index - 1;
+  
+
+    // low index 0
+
+    char *s1 = list[low_index].name; // lowindex
+    char *s2k = k->name; // key
+
+
+    char * tokens1 = strtok(s1, "Monster #");
+    char * tokens2 = strtok(s2k, "Monster #");
+
+    int s1Atoi = atoi(tokens1);
+    int s2kAtoi = atoi(tokens2);
+
+
+    printf("KEY MOTHER FUCKER!: i %d name: %d \n",high_index , s2kAtoi);
+
+    // if (low_index >= 0 && s1Atoi > s2kAtoi) {
+    //       printf("%d > %d \n", s1Atoi, s2kAtoi);
+    // }
+    // else {
+    //   printf("no change\n");
+    // }
+
+    while (low_index >= 0 && s1Atoi > s2kAtoi) {
+
+
+        printf("low_index: %d, string1: %d \n", low_index, s1Atoi);
+
+        (*comparisons)++;
+        // printf("%s is moving to %d\n", list[low_index].name, low_index + 1 );
+        list[low_index + 1] = list[low_index]; 
+        
+        low_index = low_index - 1;
+
+        s1 = list[low_index].name;
+        tokens1 = strtok(s1, "Monster #");
+        s1Atoi = atoi(tokens1);      
+
+    }
+
+    list[low_index + 1] = *k;
+
+  }
+
+  else {
+
+    printf("incorrect arguments passed to find_highest \n");
+
+  }
+
+
 }
 
 /* Implement insertion sort. */
@@ -176,6 +459,24 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
 void insertion_sort_internal(monster *list, int n, int *comparisons, int *copies, int *block_copies, int use_name, int use_weight)
 {
   // YOUR CODE GOES HERE.
+  int i, j;
+  monster* monster;
+
+
+
+    for (i = 1; i < n; i++) {
+
+          // char *s1 = list[low_index].name; // lowindex
+          //     char * tokens1 = strtok(s1, "Monster #");
+      
+      *(monster) = list[i];
+
+      insertion_sort_find_position(list, j, i, monster, comparisons, use_name, use_weight);
+
+    }
+
+
+
 }
 
 /* Shell for insertion sort. */
@@ -250,11 +551,14 @@ void merge_insertion_sort_recursive(monster *list, int low_index, int high_index
 
 void merge_insertion_sort(monster *list, int n, int use_name, int use_weight)
 {
+
+
   int comparisons = 0;
   int copies = 0;
   int block_copies = 0;
   int mallocs = 0;
   clock_t start_cpu, end_cpu;
+
 
   printf("Merge-insertion sort %d monsters...\n", n);
 
@@ -270,52 +574,79 @@ void merge_insertion_sort(monster *list, int n, int use_name, int use_weight)
 /* Main program. */
 
 void run_all_sorts(int n, int only_fast, int use_name, int use_weight) {
+
+  // introducing file ofp to see the data and not clog terminal 
+  FILE *ofp;
+  FILE *ifp;
+
+  ofp = fopen("cop3502-as3-out-test-LauKoo-Esteban", "w");    
+
   monster *our_list = make_some_monsters(n);
   monster *our_unsorted_list = malloc(sizeof(monster) * n);
 
   printf("SORT SET: n = %d, %s, by %s\n\n", n, only_fast ? "fast sorts only" : "all sorts", use_name ? "name" : "weight");
 
   if(only_fast == 0) {
-    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
-    bubble_sort(our_unsorted_list, n, use_name, use_weight);
-    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+
+
+    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    // ofp_print(ofp, our_unsorted_list, n);
+    // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // bubble_sort(our_unsorted_list, n, use_name, use_weight);
+    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    // fprintf(ofp, "Bubble sort list\n");
+    // ofp_print(ofp, our_unsorted_list, n);
+    // output_monster_list(our_unsorted_list, n, "sorted values");
+
+    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    // ofp_print(ofp, our_unsorted_list, n);
+    // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+    // selection_sort(our_unsorted_list, n, use_name, use_weight);
+    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    // fprintf(ofp, "Selection sort list\n");
+    // ofp_print(ofp, our_unsorted_list, n);
+    // output_monster_list(our_unsorted_list, n, "sorted values");
 
     memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
-    selection_sort(our_unsorted_list, n, use_name, use_weight);
-    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
-
-    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    ofp_print(ofp, our_unsorted_list, n);
+    fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
     insertion_sort(our_unsorted_list, n, use_name, use_weight);
     check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    fprintf(ofp, "Insertion sort list\n");
+    ofp_print(ofp, our_unsorted_list, n);
+    // output_monster_list(our_unsorted_list, n, "sorted values");
   }
 
-  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
-  quick_sort(our_unsorted_list, n, use_name, use_weight);
-  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  // quick_sort(our_unsorted_list, n, use_name, use_weight);
+  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
 
-  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
-  merge_sort(our_unsorted_list, n, use_name, use_weight);
-  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  // merge_sort(our_unsorted_list, n, use_name, use_weight);
+  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
 
-  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
-  merge_insertion_sort(our_unsorted_list, n, use_name, use_weight);
-  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  // merge_insertion_sort(our_unsorted_list, n, use_name, use_weight);
+  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
 
   printf("SORT SET COMPLETE\n\n");
+
+  fclose(ofp);
 
   free(our_list);
   free(our_unsorted_list);
 }
 
 int main(void) {
-  run_all_sorts(50, 0, 0, 1);
+  //run_all_sorts(30, 0, 0, 1);
+  // run_all_sorts(50, 0, 0, 1);
   run_all_sorts(50, 0, 1, 0);
-  run_all_sorts(500, 0, 0, 1);
-  run_all_sorts(500, 0, 1, 0);
-  run_all_sorts(5000, 0, 0, 1);
-  run_all_sorts(5000, 0, 1, 0);
-  run_all_sorts(50000, 1, 0, 1);
-  run_all_sorts(50000, 1, 1, 0);
-  run_all_sorts(500000, 1, 0, 1);
-  run_all_sorts(500000, 1, 1, 0);
+  // run_all_sorts(500, 0, 0, 1);
+  // run_all_sorts(500, 0, 1, 0);
+  // run_all_sorts(5000, 0, 0, 1);
+  // run_all_sorts(5000, 0, 1, 0);
+  // run_all_sorts(50000, 1, 0, 1);
+  // run_all_sorts(50000, 1, 1, 0);
+  // run_all_sorts(500000, 1, 0, 1);
+  // run_all_sorts(500000, 1, 1, 0);
 }

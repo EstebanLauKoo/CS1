@@ -221,3 +221,33 @@ output_integer_list(our_list, 25, "sorted values");
   free(our_unsorted_list);
   return 0;
 }
+
+
+if (use_weight == 1 ) {
+
+
+    
+
+  }
+
+  else if (use_name == 1) {
+
+
+  }
+
+  else {
+
+    printf("incorrect arguments passed to find_highest \n");
+
+  }
+
+
+          char *s1 = list[j].name;
+        char *s2 = list[j + 1].name;
+
+        char * tokens1 = strtok(s1, "Monster #");
+        char * tokens2 = strtok(s2, "Monster #");
+
+
+        int s1Atoi = atoi(tokens1);
+        int s2Atoi = atoi(tokens2);
