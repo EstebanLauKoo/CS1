@@ -454,48 +454,70 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
   // YOUR CODE GOES HERE.
 
   if (use_weight == 1 ) {
+    // printf("testing arguments low_index: %d, high_index: %d \n", low_index, high_index );
+
+    // printf("Monster key: name: %s weight:%f\n", k->name, k->weight);
 
     int position;
-
+    // int lowerLimiter = low_index;
+    int ComparisonIndex = high_index - 1;
+    
     position = high_index;
-    int lowerLimiter = low_index;
 
-    low_index = high_index - 1;
+    // this part is for the merge
+
+    // printf("%d \n", lowerLimiter);
 
 
+    while (ComparisonIndex >= low_index && list[ComparisonIndex].weight > (k->weight)) {
 
-
-    printf("%d \n", lowerLimiter);
-
-    while (low_index >= lowerLimiter && list[low_index].weight > k->weight) {
-
-        // printf("%f > %f \n", list[low_index].weight, k->weight);
-        printf("low_index %d, high_index %d\n", low_index, high_index);
-
-        (*comparisons)++;
-        list[low_index + 1] = list[low_index]; 
-        low_index = low_index - 1;
+        list[ComparisonIndex + 1] = list[ComparisonIndex]; 
         position--;
-      
+        // printf("Before: low index + 1: name %s weight: %f\n", list[low_index + 1].name, list[low_index + 1].weight);
+        ComparisonIndex--;
+        (*comparisons)++;
+
     }
 
-    list[low_index + 1] = *k;
+    list[ComparisonIndex + 1] = *k;
     return position;
+
+
+    // while ((low_index >= 0) && (list[low_index].weight) > (k->weight)) {
+
+    //     // printf("%f > %f \n", list[low_index].weight, k->weight);
+    //     // printf("low_index %d, high_index %d\n", low_index, high_index);
+    //     // printf("low index weight: %f low index -1 weight: %f\n" ,list[low_index].weight, list[low_index-1].weight);
+
+    //     list[low_index + 1] = list[low_index]; 
+    //     position--;
+    //     // printf("Before: low index + 1: name %s weight: %f\n", list[low_index + 1].name, list[low_index + 1].weight);
+    //     low_index--;
+    //     (*comparisons)++;
+
+
+    //     // printf("comparisons: %d\n", *comparisons);
+        
+    // }
+  
+
+    // list[low_index + 1] = *k;
+    // return position;
+    // printf("low index %d:\n", k);
+
+    // printf("low index + 1: name %s weight: %f\n", list[low_index + 1].name, list[low_index + 1].weight);
 
   }
 
   else if (use_name == 1) {
 
-    int position;
 
+    int position;
+    int ComparisonIndex = high_index - 1;
+    
     position = high_index;
 
-    low_index = high_index - 1;
-  
-
-    // low index 0
-
-    char *s1 = list[low_index].name; // lowindex
+    char *s1 = list[ComparisonIndex].name; // lowindex
     char *s2k = k->name; // key
 
 
@@ -506,6 +528,28 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
     int s2kAtoi = atoi(tokens2);
 
 
+    // this part is for the merge
+
+    // printf("%d \n", lowerLimiter);
+
+
+    while (ComparisonIndex >= low_index && s1Atoi > s2kAtoi) {
+
+        list[ComparisonIndex + 1] = list[ComparisonIndex]; 
+        position--;
+        // printf("Before: low index + 1: name %s weight: %f\n", list[low_index + 1].name, list[low_index + 1].weight);
+        ComparisonIndex--;
+        (*comparisons)++;
+
+        s1 = list[ComparisonIndex].name;
+        tokens1 = strtok(s1, "Monster #");
+        s1Atoi = atoi(tokens1);   
+
+    }
+
+    list[ComparisonIndex + 1] = *k;
+    return position;
+
     // printf("KEY MOTHER FUCKER!: i %d name: %d \n",high_index , s2kAtoi);
 
     // if (low_index >= 0 && s1Atoi > s2kAtoi) {
@@ -515,26 +559,26 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
     //   printf("no change\n");
     // }
 
-    while (low_index >= 0 && s1Atoi > s2kAtoi) {
+    // while (low_index >= 0 && s1Atoi > s2kAtoi) {
 
 
-        // printf("low_index: %d, string1: %d \n", low_index, s1Atoi);
+    //     // printf("low_index: %d, string1: %d \n", low_index, s1Atoi);
 
-        (*comparisons)++;
-        position--;
-        // printf("%s is moving to %d\n", list[low_index].name, low_index + 1 );
-        list[low_index + 1] = list[low_index]; 
+    //     (*comparisons)++;
+    //     position--;
+    //     // printf("%s is moving to %d\n", list[low_index].name, low_index + 1 );
+    //     list[low_index + 1] = list[low_index]; 
         
-        low_index = low_index - 1;
+    //     low_index = low_index - 1;
 
-        s1 = list[low_index].name;
-        tokens1 = strtok(s1, "Monster #");
-        s1Atoi = atoi(tokens1);      
+    //     s1 = list[low_index].name;
+    //     tokens1 = strtok(s1, "Monster #");
+    //     s1Atoi = atoi(tokens1);      
 
-    }
+    // }
 
-    list[low_index + 1] = *k;
-    return position;
+    // list[low_index + 1] = *k;
+    // return position;
   }
 
   else {
@@ -552,18 +596,16 @@ void insertion_sort_internal(monster *list, int n, int *comparisons, int *copies
 {
   // YOUR CODE GOES HERE.
   int i, j;
-  monster* monster;
-
-
+  monster key;
+  // printf("testing arguments n: %d, comparisons: %d, copies: %d, block copies: %d, usename: %d, useweight: %d \n", n, *comparisons, *copies, *block_copies, use_name, use_weight);
+    j = 0;
 
     for (i = 1; i < n; i++) {
-
           // char *s1 = list[low_index].name; // lowindex
           //     char * tokens1 = strtok(s1, "Monster #");
-      
-      *(monster) = list[i];
+      key = list[i];
 
-      insertion_sort_find_position(list, j, i, monster, comparisons, use_name, use_weight);
+      insertion_sort_find_position(list, j, i, &key, comparisons, use_name, use_weight);
 
     }
     fprintf(ofp, "insertion sort\n");
@@ -606,7 +648,7 @@ void merge_sort_merge(monster *list, int l1, int h1, int l2, int h2,
 {
   // YOUR CODE GOES HERE.
 
-  printf("merge sort merge running\n");
+  // printf("merge sort merge running\n");
   if (use_weight == 1 ) {
 
 
@@ -632,14 +674,14 @@ void merge_sort_merge(monster *list, int l1, int h1, int l2, int h2,
   for (i = 0; i < leftArraySize; i++) {
 
     auxArrayL[i] = list[l1 + i]; 
-    printf("leftArray: index: %d weight: %f\n", i, auxArrayL[i].weight);
+    // printf("leftArray: index: %d weight: %f\n", i, auxArrayL[i].weight);
 
   }
 
   for (j = 0; j < rightArraySize; j++) {
 
     auxArrayR[j] = list[h1 + 1 + j];
-    printf("rightArray: index: %d number: %f\n", j, auxArrayR[j].weight);
+    // printf("rightArray: index: %d number: %f\n", j, auxArrayR[j].weight);
 
   }
 
@@ -703,7 +745,7 @@ void merge_sort_merge(monster *list, int l1, int h1, int l2, int h2,
      list[i] = auxFullArray[i];
   }
 
-  printf("l1: %d, h1 %d, l2 %d, h2 %d\n", l1, h1, l2, h2);
+  // printf("l1: %d, h1 %d, l2 %d, h2 %d\n", l1, h1, l2, h2);
 
   // printf("actualist\n");
   // for (i = 0; i < 5; i++) {
@@ -771,7 +813,7 @@ void merge_sort_merge(monster *list, int l1, int h1, int l2, int h2,
 
 
     if (s1Atoi <= s2Atoi) {
-      // (*comparisons)++;
+      (*comparisons)++;
       auxFullArray[k] = auxArrayL[i];
       i++;
       // printf("left Aux array replace\n");
@@ -779,7 +821,7 @@ void merge_sort_merge(monster *list, int l1, int h1, int l2, int h2,
     }
 
     else {
-      // (*comparisons)++;
+      (*comparisons)++;
       auxFullArray[k] = auxArrayR[j];
       j++;
       // printf("right Aux array replace\n");
@@ -893,9 +935,7 @@ void merge_insertion_sort_recursive(monster *list, int low_index, int high_index
                                     int use_name, int use_weight, FILE *ofp)
 {
   // YOUR CODE GOES HERE.
-
-    int n = high_index - low_index;
-    printf("high_index %d low_index %d\n", high_index, low_index);
+  // printf("high_index %d low_index %d\n", high_index, low_index);
 
   // if (high_index - low_index > 25 ) {
   //   printf("switched to insertion sort internal\n");
@@ -912,38 +952,46 @@ void merge_insertion_sort_recursive(monster *list, int low_index, int high_index
   // merge_sort_merge(list, low_index, half, half + 1, high_index, comparisons, copies, block_copies, mallocs, use_name, use_weight);
 
   // }
+  int n = 1;
+  n = high_index - low_index;
+  // printf("n : %d\n", n);
   int half = (low_index + high_index) / 2;
-  printf("n : %d\n", n);
-  if (n > 25) {
+  // printf("n : %d\n", n);
+  if ( n > 25 ) {
     merge_insertion_sort_recursive(list, low_index, half, comparisons, copies, block_copies, mallocs, use_name, use_weight, ofp);
     merge_insertion_sort_recursive(list, half + 1, high_index, comparisons, copies, block_copies, mallocs, use_name, use_weight, ofp);
     merge_sort_merge(list, low_index, half, half + 1, high_index, comparisons, copies, block_copies, mallocs, use_name, use_weight, ofp);
   }
 
   else {
-    int i, j;
-    monster* key;
-    
-        for (i = low_index  ; i < high_index +1 ; i++) {
 
-          printf("i %d\n", i);
+    // insertion_sort_internal(list, high_index + 1, comparisons, copies, block_copies, use_name, use_weight, ofp);
+
+    int i, j;
+    monster key;
+    
+        for (i = 1  ; i < high_index +1 ; i++) {
+
+          // printf("i %d\n", i);
 
           // char *s1 = list[low_index].name; // lowindex
           //     char * tokens1 = strtok(s1, "Monster #");
       
-      *(key) = list[i];
+      key = list[i];
 
-      insertion_sort_find_position(list, low_index, i, key, comparisons, use_name, use_weight);
+      insertion_sort_find_position(list, low_index, i, &key, comparisons, use_name, use_weight);
+
+
 
     }
-  printf("comparisons %d\n", *comparisons);  
-  } 
+  // printf("comparisons %d\n", *comparisons);  
+   
   // insertion_sort_internal(list, high_index + 1, comparisons, copies, block_copies, use_name, use_weight, ofp);
 
 
 
 
-  
+  } 
 
   
 
@@ -993,53 +1041,53 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight) {
   if(only_fast == 0) {
 
 
-    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
     // ofp_print(ofp, our_unsorted_list, n);
     // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    // bubble_sort(our_unsorted_list, n, use_name, use_weight);
-    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    bubble_sort(our_unsorted_list, n, use_name, use_weight);
+    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
     // fprintf(ofp, "Bubble sort list\n");
     // ofp_print(ofp, our_unsorted_list, n);
 
 
-    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
     // ofp_print(ofp, our_unsorted_list, n);
     // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    // selection_sort(our_unsorted_list, n, use_name, use_weight);
-    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    selection_sort(our_unsorted_list, n, use_name, use_weight);
+    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
     // fprintf(ofp, "Selection sort list\n");
     // ofp_print(ofp, our_unsorted_list, n);
 
 
-    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
     // ofp_print(ofp, our_unsorted_list, n);
     // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    // insertion_sort(our_unsorted_list, n, use_name, use_weight,ofp);
-    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    insertion_sort(our_unsorted_list, n, use_name, use_weight,ofp);
+    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
     // fprintf(ofp, "Insertion sort list\n");
     // ofp_print(ofp, our_unsorted_list, n);
 
   }
 
-  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
   // ofp_print(ofp, our_unsorted_list, n);
   // fprintf(ofp, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-  // quick_sort(our_unsorted_list, n, use_name, use_weight);
-  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  quick_sort(our_unsorted_list, n, use_name, use_weight);
+  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
   // fprintf(ofp, "Quick sort list\n");
   // ofp_print(ofp, our_unsorted_list, n);
 
-  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
   // ofp_print(ofp, our_unsorted_list, n);
   // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-  // merge_sort(our_unsorted_list, n, use_name, use_weight, ofp);
-  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  merge_sort(our_unsorted_list, n, use_name, use_weight, ofp);
+  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
   // fprintf(ofp, "Merge sort list\n");
   // ofp_print(ofp, our_unsorted_list, n);
 
   memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
-  ofp_print(ofp, our_unsorted_list, n);
-  fprintf(ofp, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+  // ofp_print(ofp, our_unsorted_list, n);
+  // fprintf(ofp, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
   merge_insertion_sort(our_unsorted_list, n, use_name, use_weight, ofp);
   check_monster_sort(our_unsorted_list, n, use_name, use_weight);
   // fprintf(ofp, "Quick sort list\n");
@@ -1054,10 +1102,10 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight) {
 }
 
 int main(void) {
-  // run_all_sorts(50, 0, 0, 1);
-  // run_all_sorts(50, 0, 1, 0);
-  // run_all_sorts(500, 0, 0, 1);
-   run_all_sorts(50, 0, 0, 1);
+  run_all_sorts(50, 0, 0, 1);
+  run_all_sorts(50, 0, 1, 0);
+  // run_all_sorts(500, 0, 1, 0);
+  // run_all_sorts(500, 0, 1, 0);
   // run_all_sorts(5000, 0, 0, 1);
   // run_all_sorts(5000, 0, 1, 0);
   // run_all_sorts(50000, 1, 0, 1);
