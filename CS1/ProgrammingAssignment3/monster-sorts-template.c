@@ -608,13 +608,13 @@ void insertion_sort_internal(monster *list, int n, int *comparisons, int *copies
       insertion_sort_find_position(list, j, i, &key, comparisons, use_name, use_weight);
 
     }
-    fprintf(ofp, "insertion sort\n");
-    fprintf(ofp, "-----------------------------\n");
-    for (i = 0; i < n; i++) {
+    // fprintf(ofp, "insertion sort\n");
+    // fprintf(ofp, "-----------------------------\n");
+    // for (i = 0; i < n; i++) {
 
-      fprintf(ofp, "id :%d %s\n", i , list[i].name);
+    //   fprintf(ofp, "id :%d %s\n", i , list[i].name);
 
-    }
+    // }
 
     
 
@@ -1041,20 +1041,20 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight) {
   if(only_fast == 0) {
 
 
-    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
     // ofp_print(ofp, our_unsorted_list, n);
     // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    bubble_sort(our_unsorted_list, n, use_name, use_weight);
-    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    // bubble_sort(our_unsorted_list, n, use_name, use_weight);
+    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
     // fprintf(ofp, "Bubble sort list\n");
     // ofp_print(ofp, our_unsorted_list, n);
 
 
-    memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+    // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
     // ofp_print(ofp, our_unsorted_list, n);
     // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-    selection_sort(our_unsorted_list, n, use_name, use_weight);
-    check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+    // selection_sort(our_unsorted_list, n, use_name, use_weight);
+    // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
     // fprintf(ofp, "Selection sort list\n");
     // ofp_print(ofp, our_unsorted_list, n);
 
@@ -1069,27 +1069,27 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight) {
 
   }
 
-  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
   // ofp_print(ofp, our_unsorted_list, n);
   // fprintf(ofp, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-  quick_sort(our_unsorted_list, n, use_name, use_weight);
-  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  // quick_sort(our_unsorted_list, n, use_name, use_weight);
+  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
   // fprintf(ofp, "Quick sort list\n");
   // ofp_print(ofp, our_unsorted_list, n);
 
-  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
   // ofp_print(ofp, our_unsorted_list, n);
   // fprintf(ofp, "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++\n");
-  merge_sort(our_unsorted_list, n, use_name, use_weight, ofp);
-  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  // merge_sort(our_unsorted_list, n, use_name, use_weight, ofp);
+  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
   // fprintf(ofp, "Merge sort list\n");
   // ofp_print(ofp, our_unsorted_list, n);
 
-  memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+  // memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
   // ofp_print(ofp, our_unsorted_list, n);
   // fprintf(ofp, "\n+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-  merge_insertion_sort(our_unsorted_list, n, use_name, use_weight, ofp);
-  check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+  // merge_insertion_sort(our_unsorted_list, n, use_name, use_weight, ofp);
+  // check_monster_sort(our_unsorted_list, n, use_name, use_weight);
   // fprintf(ofp, "Quick sort list\n");
   // ofp_print(ofp, our_unsorted_list, n);
 
@@ -1103,7 +1103,7 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight) {
 
 int main(void) {
   run_all_sorts(50, 0, 0, 1);
-  run_all_sorts(50, 0, 1, 0);
+  // run_all_sorts(50, 0, 1, 0);
   // run_all_sorts(500, 0, 1, 0);
   // run_all_sorts(500, 0, 1, 0);
   // run_all_sorts(5000, 0, 0, 1);

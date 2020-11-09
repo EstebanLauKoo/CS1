@@ -183,19 +183,33 @@ void selection_sort(int *list, int n)
 
 int insertion_sort_find_position(int *list, int low_index, int high_index, int k, int *comparisons)
 {
+    int position;
+    // int lowerLimiter = low_index;
+    int ComparisonIndex = high_index - 1;
+    
+    position = high_index;
+
     k = list[high_index];
 
-    low_index = high_index - 1;
+    
 
-    while (low_index >= 0 && list[low_index] > k) {
+    // this part is for the merge
 
+    // printf("%d \n", lowerLimiter);
+
+
+    while (ComparisonIndex >= low_index && list[ComparisonIndex] > k) {
+
+        // list[ComparisonIndex + 1] = list[ComparisonIndex]; 
+        position--;
+        // printf("Before: low index + 1: name %s weight: %f\n", list[low_index + 1].name, list[low_index + 1].weight);
+        ComparisonIndex--;
         (*comparisons)++;
-        list[low_index + 1] = list[low_index];
-        low_index = low_index - 1;
 
     }
 
-        list[low_index + 1] = k;
+    // list[ComparisonIndex + 1] = k;
+    return position;
 
 
 }
@@ -205,15 +219,57 @@ void insertion_sort_internal(int *list, int n, int *comparisons, int *copies, in
 
   int i, j;
   int key;
+  int position;
 
   for (i = 1; i < n; i++) {
 
-    // key = list[i];
+    key = list[i];
 
-    // j = i - 1;
+    j = 0;
 
-    insertion_sort_find_position(list, j, i, key, comparisons);
+    position = insertion_sort_find_position(list, j, i, key, comparisons);
 
+    printf("position %d\n", position);
+
+    // int a[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    // int b[3];
+
+    output_integer_list(list, n, "unordered list");
+
+    int listTemp[10];
+    int temp[1];
+
+    int tempArraySize = i - position;
+    
+    memcpy(temp, list + i, sizeof(int));
+
+    memcpy( listTemp, list + position , tempArraySize * sizeof( int ) ); 
+
+    output_integer_list(listTemp, i, "temp list"); 
+
+    memmove(list + position + 1, listTemp, tempArraySize * sizeof(int));
+
+    memmove(list + position, temp, sizeof(int));
+
+    output_integer_list(list, n, "ordered list");
+
+    
+    // printf("tempArraySize %d\n", tempArraySize);
+
+    // // output_integer_list(b, 3, "unordered list");
+
+    // memcpy( b, a + 3 , 3 * sizeof( int ) ); 
+
+    // // memcpy(listTemp, list + 3, tempArraySize * sizeof(int));
+
+    // memmove(a, b , 3 * sizeof(int) );
+
+    // output_integer_list(listTemp, 10, "unordered list");
+    // memcpy(temp, list + tempArraySize - position, sizeof(int));
+
+    // for (j = position; j < i; j++)
+
+    // memcpy(, list + position +, sizeof(int) * tempArraySize);
     // while (j >= 0 && list[j] > key) {
 
     //     list[j + 1] = list[j];
@@ -224,6 +280,30 @@ void insertion_sort_internal(int *list, int n, int *comparisons, int *copies, in
     // list[j + 1] = key;
 
   }
+
+    // int a[10] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    // int b[3];
+
+    // int listTemp[10];
+    // int temp[1];
+
+    // int tempArraySize = i - position;
+
+    // printf("tempArraySize %d\n", tempArraySize);
+
+
+    // memcpy( b, a + 3 , 3 * sizeof( int ) ); 
+
+    // output_integer_list(b, 3, "b");
+
+    // // memcpy(listTemp, list + 3, tempArraySize * sizeof(int));
+
+    // memmove(a + 6, b , 3 * sizeof(int) );
+
+    // output_integer_list(a, 10, "a");
+
+
+  // output_integer_list(list, n, "ordered list");
 
 }
 
@@ -537,20 +617,20 @@ int *make_some_integers(int n)
 /* Main program. */
 
 int main(void) {
-  int n = 500;
+  int n = 10;
   int *our_list = make_some_integers(n);
   int *our_unsorted_list = malloc(sizeof(int) * n);
 
 //  output_integer_list(our_list, n, "unsorted values");
 
-  memcpy(our_unsorted_list, our_list, sizeof(int) * n);
-  bubble_sort(our_unsorted_list, n);
+  // memcpy(our_unsorted_list, our_list, sizeof(int) * n);
+  // bubble_sort(our_unsorted_list, n);
 
-  memcpy(our_unsorted_list, our_list, sizeof(int) * n);
-  selection_sort(our_unsorted_list, n);
+  // memcpy(our_unsorted_list, our_list, sizeof(int) * n);
+  // selection_sort(our_unsorted_list, n);
 
-  memcpy(our_unsorted_list, our_list, sizeof(int) * n);
-  quick_sort(our_unsorted_list, n);
+  // memcpy(our_unsorted_list, our_list, sizeof(int) * n);
+  // quick_sort(our_unsorted_list, n);
 
 
 
@@ -559,13 +639,13 @@ int main(void) {
 
 
 
-  memcpy(our_unsorted_list, our_list, sizeof(int) * n);
-  merge_sort(our_unsorted_list, n);
+  // memcpy(our_unsorted_list, our_list, sizeof(int) * n);
+  // merge_sort(our_unsorted_list, n);
 
 
 
-  memcpy(our_unsorted_list, our_list, sizeof(int) * n);
-  merge_insertion_sort(our_unsorted_list, n);
+  // memcpy(our_unsorted_list, our_list, sizeof(int) * n);
+  // merge_insertion_sort(our_unsorted_list, n);
 
 
 
