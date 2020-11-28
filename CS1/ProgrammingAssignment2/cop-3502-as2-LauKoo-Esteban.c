@@ -492,7 +492,7 @@ void eat_fish(pond *p, FILE *ofp)
 }
 
 
-// queue functionality
+// queue functionality. push.
 void enqueue(fish_list *nfl, fish_list *fl)
 {
 
@@ -512,7 +512,7 @@ void enqueue(fish_list *nfl, fish_list *fl)
     }
 }
 
-// Add f to the tail of q.
+// Add f to the tail of q. pop
 
 fish *dequeue(fish_list *fl)
 {

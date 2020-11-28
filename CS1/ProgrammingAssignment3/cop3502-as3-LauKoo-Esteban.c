@@ -73,6 +73,7 @@ void swap_monsters(monster *list, int i, int j)
 {
     monster temp;
 
+    // copy j into temp, copy j + 1 into j, copy temp into j + 1;
     memcpy(&temp, list + i, sizeof(monster));
     memcpy(list + i, list + j, sizeof(monster));
     memcpy(list + j, &temp, sizeof(monster));
@@ -456,6 +457,7 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
     int position;
     int ComparisonIndex;
 
+
     ComparisonIndex = high_index - 1;
 
     position = high_index;
@@ -477,6 +479,7 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
     else if (use_name == 1)
     {
 
+
         char *s1 = list[ComparisonIndex].name;
         char *s2k = k->name;
 
@@ -486,6 +489,7 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
         int s1Atoi = atoi(tokens1);
         int s2kAtoi = atoi(tokens2);
 
+
         while (ComparisonIndex >= low_index && s1Atoi > s2kAtoi)
         {
 
@@ -494,10 +498,21 @@ int insertion_sort_find_position(monster *list, int low_index, int high_index, m
             ComparisonIndex--;
             (*comparisons)++;
 
+            if (ComparisonIndex == -1) {
+
+                return position;
+            }
+
             s1 = list[ComparisonIndex].name;
             tokens1 = strtok(s1, "Monster #");
             s1Atoi = atoi(tokens1);
+
+
         }
+
+  
+
+        // printf("-----------------------\n");
 
         return position;
     }
@@ -875,9 +890,11 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight)
     monster *our_unsorted_list = malloc(sizeof(monster) * n);
 
     printf("SORT SET: n = %d, %s, by %s\n\n", n, only_fast ? "fast sorts only" : "all sorts", use_name ? "name" : "weight");
+ 
 
     if (only_fast == 0)
     {
+
 
         memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
         bubble_sort(our_unsorted_list, n, use_name, use_weight);
@@ -887,9 +904,11 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight)
         selection_sort(our_unsorted_list, n, use_name, use_weight);
         check_monster_sort(our_unsorted_list, n, use_name, use_weight);
 
-        memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
+        memcpy(our_unsorted_list, our_list, sizeof(monster) * n);      
         insertion_sort(our_unsorted_list, n, use_name, use_weight);
         check_monster_sort(our_unsorted_list, n, use_name, use_weight);
+
+
     }
 
     memcpy(our_unsorted_list, our_list, sizeof(monster) * n);
@@ -906,6 +925,8 @@ void run_all_sorts(int n, int only_fast, int use_name, int use_weight)
 
     printf("SORT SET COMPLETE\n\n");
 
+
+
     free(our_list);
     free(our_unsorted_list);
 }
@@ -919,7 +940,7 @@ int main(void)
     run_all_sorts(500, 0, 1, 0);
     run_all_sorts(5000, 0, 0, 1);
     run_all_sorts(5000, 0, 1, 0);
-    run_all_sorts(50000, 1, 0, 1);
+    run_all_sorts(50000, 1, 1, 0);
     run_all_sorts(50000, 1, 1, 0);
     run_all_sorts(500000, 1, 0, 1);
     run_all_sorts(500000, 1, 1, 0);
