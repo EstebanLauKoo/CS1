@@ -109,7 +109,7 @@ void print_tree_inorder(tree_node *t, int depth) {
   }
 
   print_indent(depth);
-  printf("payload: %d\n", t->payload);
+  printf("payload:  %d\n", t->payload);
 
   if(t->right) {
     print_indent(depth);

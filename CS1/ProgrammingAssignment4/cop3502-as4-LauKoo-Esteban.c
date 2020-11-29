@@ -96,6 +96,24 @@ void print_tree_inorder_second(tree_name_node *t, int depth) {
   }
 }
 
+void print_tree_inorder(item_node *t, int depth) {
+  if(t->left) {
+    print_indent(depth);
+    printf("descending left...\n");
+    print_tree_inorder(t->left, depth + 1);
+  }
+
+  print_indent(depth);
+  printf("name:  %s\n", t->name);
+
+  if(t->right) {
+    print_indent(depth);
+    printf("descending right...\n");
+    print_tree_inorder(t->right, depth + 1);
+  }
+}
+
+
 void print_tree_inorder_first(tree_name_node *t, int depth) {
   if(t->left) {
     print_tree_inorder_first(t->left, depth + 1);
@@ -134,17 +152,126 @@ item_node *new_item_node(char *name, int count) {
 }
 
 // this stuff works for the first bst.
-tree_name_node *bst_find(tree_name_node *parent, char *value) {
+tree_name_node *search_tree_name(tree_name_node *parent, char *value) {
   if(parent == NULL) {
     return NULL;
   } else if(strcmp(value ,parent->treeName) == 0) {
     return parent;
   } else if(strcmp(value, parent->treeName) == -1) {
-    return bst_find(parent->left, value);
+    return search_tree_name(parent->left, value);
   } else {
-    return bst_find(parent->right, value);
+    return search_tree_name(parent->right, value);
   }
 }
+
+item_node *search_item_node(item_node *parent, char *value) {
+  if(parent == NULL) {
+    return NULL;
+  } else if(strcmp(value ,parent->name) == 0) {
+    return parent;
+  } else if(strcmp(value, parent->name) == -1) {
+    return search_item_node(parent->left, value);
+  } else {
+    return search_item_node(parent->right, value);
+  }
+}
+
+int item_before(item_node *parent, char *value) {
+
+  int nitemsBefore = 0;
+
+  // if(parent == NULL) {
+  //   return NULL;
+  // } else if(strcmp(value ,parent->name) == 0) {
+  //   printf("nitemsBefore:%d\n", nitemsBefore);
+  //   return nitemsBefore;
+  // } else if(strcmp(value, parent->name) == -1) {
+  //   nitemsBefore++;
+  //   return item_before(parent->left, value);
+  // } else {
+  //   nitemsBefore++;
+  //   return item_before(parent->right, value);
+  // }
+
+  while (parent != NULL) {
+    nitemsBefore++;
+      printf("parent: %s value : %s\n", parent->name, value);
+
+    int result = strcmp(parent->name, value);
+
+   
+    if (result == -1) {
+
+      item_before(parent->left, value);
+
+    }
+
+    if (result == 1) {
+
+      item_before(parent->right,value);
+    }
+
+    if (result == 0) {
+
+          return item_before(parent->left , value) + item_before(parent->right, value);
+
+    }
+
+
+
+  }
+  
+
+
+
+
+    // if(parent->left) {
+    // nitemsBefore++;
+    // printf("descending left...\n");
+
+    // item_before(parent->left, value);
+    // }
+
+
+    // if(parent->right) {
+    // nitemsBefore++;
+    // printf("descending right...\n");
+    // item_before(parent->right, value);
+    // }
+  
+
+  // if (strcmp(parent->name, value) == 0) {
+  //   printf("its true:\n");
+  //   return nitemsBefore;
+  // }
+
+  // if (strcmp(parent->name, value) != 0) {
+    
+  //   if(parent->left) {
+  //   nitemsBefore++;
+  //   printf("descending left...\n");
+
+  //   item_before(parent->left, value);
+  // }
+
+
+  //   if(parent->right) {
+  //   nitemsBefore++;
+  //   printf("descending right...\n");
+  //   item_before(parent->right, value);
+  //   }
+  
+  // }
+
+
+
+
+
+
+}
+
+
+
 
 void set_left_child(tree_name_node *parent, tree_name_node *child) {
   parent->left = child;
@@ -205,10 +332,6 @@ item_node *bst_insert_tree_bottom(item_node *parent, item_node *new_node) {
     }  
 
 }
-
-
-
-
 
 // item_node *new_item_node(char *name, int count) {
 
@@ -272,7 +395,6 @@ int main(void)
     tree_name_node *t1 = new_tree_node(s);
 
 
-
     for (i = 0; i < ntrees - 1; i++) {
         
         get_next_nonblank_line(ifp, s, 63);
@@ -298,7 +420,7 @@ int main(void)
         item_node *it1 = new_item_node(item_string, count);
         
         // this will return the tree that we need to link to the first item. need to build logic for that.
-        tree_name_node *mainTree = bst_find(t1, tree_string);
+        tree_name_node *mainTree = search_tree_name(t1, tree_string);
 
         if (mainTree == NULL) {
             printf("no mainTree found \n");
@@ -334,24 +456,47 @@ int main(void)
 
         char *command = strtok(s, " ");
         char *tree_command_string = strtok(NULL, " ");
-        // printf("tree %s\n", tree_command_string);
         char *item_command_string  = strtok(NULL, " ");
-        // printf("item %s\n", item_command_string);
+
 
 
         if (strcmp(command, "search") == 0) {
 
-            // printf("search command\n");
+
+            tree_name_node *mainTree = search_tree_name(t1, tree_command_string);
+
+            item_node *search_item = search_item_node(mainTree->theTree, item_command_string);
+
+            if (search_item == NULL) {
+
+                printf("%s not found in %s\n", item_command_string, tree_command_string);
+
+            }
+
+            else {
+            printf("%d %s found in %s\n", search_item->count, search_item->name, tree_command_string);
+
+
+            }
 
         }
         else if (strcmp(command, "item_before") == 0) {
 
+            tree_name_node *mainTree = search_tree_name(t1, tree_command_string);
+
+            int nitemBefore = item_before(mainTree->theTree, item_command_string);
+            
+            printf("item_before %s: %d\n", item_command_string, nitemBefore);
             // printf("item_before command\n");
+
+            print_tree_inorder(mainTree->theTree, 0);
 
         }
         else if (strcmp(command, "height_balance") == 0) {
 
             // printf("height_balance command\n");
+
+
 
         }
         else if (strcmp(command, "count") == 0) {
@@ -372,10 +517,6 @@ int main(void)
         else {
             printf("incorrect command\n");
         }                
-        // fscanf(ifp, "%s %s %s", command_string, tree_command_string, item_command_string);
-
-
-        // printf("command: %s, tree: %s, item: %s\n", command_string, tree_command_string, item_command_string);
 
     }
 
