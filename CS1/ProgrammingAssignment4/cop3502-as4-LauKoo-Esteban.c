@@ -54,22 +54,62 @@ void get_next_nonblank_line(FILE *ifp, char *s, int max_length)
     }
 }
 
-void print_tree_inorder(tree_name_node *t, int depth) {
-  if(t->left) {
-    print_indent(depth);
-    printf("descending left...\n");
-    print_tree_inorder(t->left, depth + 1);
-  }
-
-  print_indent(depth);
-  printf("payload: %d\n", t->payload);
-
-  if(t->right) {
-    print_indent(depth);
-    printf("descending right...\n");
-    print_tree_inorder(t->right, depth + 1);
+void print_indent(int depth)
+{
+  for(int i = 0; i < depth; i++) {
+    printf(" ");
   }
 }
+
+void print_tree_inorder_item_node(item_node *t) {
+  if(t->left) {
+
+    print_tree_inorder_item_node(t->left);
+  }
+
+
+  printf("%s ", t->name);
+
+  if(t->right) {
+
+
+    print_tree_inorder_item_node(t->right);
+  }
+}
+
+void print_tree_inorder_second(tree_name_node *t, int depth) {
+  if(t->left) {
+
+    print_tree_inorder_second(t->left, depth + 1);
+  }
+
+
+  printf("===%s===\n", t->treeName);
+
+    print_tree_inorder_item_node(t->theTree);
+    printf("\n");
+
+  if(t->right) {
+
+
+    print_tree_inorder_second(t->right, depth + 1);
+  }
+}
+
+void print_tree_inorder_first(tree_name_node *t, int depth) {
+  if(t->left) {
+    print_tree_inorder_first(t->left, depth + 1);
+  }
+
+  printf("%s ", t->treeName);
+
+  if(t->right) {
+    print_tree_inorder_first(t->right, depth + 1);
+  }
+
+}
+
+
 
 tree_name_node *new_tree_node(char *name) {
 
@@ -80,6 +120,30 @@ tree_name_node *new_tree_node(char *name) {
     t->theTree = NULL;
     return t;
 
+}
+
+item_node *new_item_node(char *name, int count) {
+
+    item_node *it = malloc(sizeof(item_node));
+    strcpy(it->name, name);
+    it->count = count;
+    it->left = NULL;
+    it->right= NULL;
+
+    return it;
+}
+
+// this stuff works for the first bst.
+tree_name_node *bst_find(tree_name_node *parent, char *value) {
+  if(parent == NULL) {
+    return NULL;
+  } else if(strcmp(value ,parent->treeName) == 0) {
+    return parent;
+  } else if(strcmp(value, parent->treeName) == -1) {
+    return bst_find(parent->left, value);
+  } else {
+    return bst_find(parent->right, value);
+  }
 }
 
 void set_left_child(tree_name_node *parent, tree_name_node *child) {
@@ -93,7 +157,7 @@ void set_right_child(tree_name_node *parent, tree_name_node *child) {
 
 tree_name_node *bst_insert_tree(tree_name_node *parent, tree_name_node *new_node) {
 
-    if (new_node->treeName < parent->treeName) {
+    if (strcmp(new_node->treeName,parent->treeName) == -1) {
         if (parent->left != NULL ) {
             return bst_insert_tree(parent->left, new_node);
         } else {
@@ -109,7 +173,42 @@ tree_name_node *bst_insert_tree(tree_name_node *parent, tree_name_node *new_node
         }
     }  
 
-} 
+}
+
+
+// this is for the 2nd bst
+
+void set_left_child_bottom(item_node *parent, item_node *child) {
+    parent->left= child;
+}
+
+void set_right_child_bottom(item_node *parent, item_node *child) {
+    parent->right= child;
+}
+
+item_node *bst_insert_tree_bottom(item_node *parent, item_node *new_node) {
+
+    if (strcmp(new_node->name,parent->name) == -1) {
+        if (parent->left != NULL ) {
+            return bst_insert_tree_bottom(parent->left, new_node);
+        } else {
+            set_left_child_bottom(parent, new_node);
+            return new_node;
+        }
+    } else {
+        if (parent->right != NULL) {
+            return bst_insert_tree_bottom(parent->right, new_node);
+        } else {
+            set_right_child_bottom(parent, new_node);
+            return new_node;
+        }
+    }  
+
+}
+
+
+
+
 
 // item_node *new_item_node(char *name, int count) {
 
@@ -147,11 +246,21 @@ int main(void)
 
     int ntrees, nitems, ncommands;
     int i, j, k;
-    char s[32];
+    char s[64];
 
     // ifp and ofp files
     ifp = fopen("cop3502-as4-input.txt", "r");
     ofp = fopen("cop3502-as4-out-LauKoo-Esteban", "w");
+
+    char tree_string[64];
+    char item_string[32];
+    char count_string[32];
+
+    int count;
+
+    char command_string[64];
+    char tree_command_string[64];
+    char item_command_string[32];
 
 
     // gets our n values for ntrees, nitems, and ncommands;
@@ -163,19 +272,115 @@ int main(void)
     tree_name_node *t1 = new_tree_node(s);
 
 
-    for (i = 0; i < ntrees; i++) {
+
+    for (i = 0; i < ntrees - 1; i++) {
         
-        get_next_nonblank_line(ifp, s, 31);
+        get_next_nonblank_line(ifp, s, 63);
 
         tree_name_node *t2 = new_tree_node(s);
 
         bst_insert_tree(t1, t2);
 
-        printf("treeName %s\n", t2->treeName);
 
     }
 
-    print_tree_inorder(t1, 0);
+    
+
+    // the add function has to add left and right from the item and connect to tree. so we have to pass tree by search.
+
+    for (i = 0; i < nitems; i++) {
+
+
+        fscanf(ifp, "%s %s %s", tree_string, item_string, count_string);
+
+        count = atoi(count_string);
+
+        item_node *it1 = new_item_node(item_string, count);
+        
+        // this will return the tree that we need to link to the first item. need to build logic for that.
+        tree_name_node *mainTree = bst_find(t1, tree_string);
+
+        if (mainTree == NULL) {
+            printf("no mainTree found \n");
+        }
+        // this checks if the main tree has no link for theTree; If it doesn't then sets the first one to that. problem if there is no tree that matches.
+        else if(mainTree->theTree == NULL) {
+
+            mainTree->theTree = it1;
+
+        }
+
+        else {
+
+
+            bst_insert_tree_bottom(mainTree->theTree, it1);
+
+        }
+
+
+    }
+
+
+    print_tree_inorder_first(t1, 0);
+
+    printf("\n");
+
+    print_tree_inorder_second(t1, 0);
+
+    printf("===Processing Commands===\n");
+
+    for (i = 0; i < ncommands; i++) {
+        get_next_nonblank_line(ifp, s, 62);
+
+        char *command = strtok(s, " ");
+        char *tree_command_string = strtok(NULL, " ");
+        // printf("tree %s\n", tree_command_string);
+        char *item_command_string  = strtok(NULL, " ");
+        // printf("item %s\n", item_command_string);
+
+
+        if (strcmp(command, "search") == 0) {
+
+            // printf("search command\n");
+
+        }
+        else if (strcmp(command, "item_before") == 0) {
+
+            // printf("item_before command\n");
+
+        }
+        else if (strcmp(command, "height_balance") == 0) {
+
+            // printf("height_balance command\n");
+
+        }
+        else if (strcmp(command, "count") == 0) {
+
+            // printf("count command\n");
+
+        }
+        else if (strcmp(command, "delete") == 0) {
+
+            // printf("delete command\n");
+
+        }
+        else if (strcmp(command, "delete_tree") == 0) {
+
+            // printf("delete_tree command\n");
+
+        }
+        else {
+            printf("incorrect command\n");
+        }                
+        // fscanf(ifp, "%s %s %s", command_string, tree_command_string, item_command_string);
+
+
+        // printf("command: %s, tree: %s, item: %s\n", command_string, tree_command_string, item_command_string);
+
+    }
+
+    
+    
     
     fclose(ifp);
     fclose(ofp);
