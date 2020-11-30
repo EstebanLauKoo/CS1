@@ -176,98 +176,24 @@ item_node *search_item_node(item_node *parent, char *value) {
   }
 }
 
-int item_before(item_node *parent, char *value) {
 
-  int nitemsBefore = 0;
+//Performs items_before function
+int count_items_before(item_node *it, char *item, int count)
+{
 
-  // if(parent == NULL) {
-  //   return NULL;
-  // } else if(strcmp(value ,parent->name) == 0) {
-  //   printf("nitemsBefore:%d\n", nitemsBefore);
-  //   return nitemsBefore;
-  // } else if(strcmp(value, parent->name) == -1) {
-  //   nitemsBefore++;
-  //   return item_before(parent->left, value);
-  // } else {
-  //   nitemsBefore++;
-  //   return item_before(parent->right, value);
-  // }
-
-  while (parent != NULL) {
-    nitemsBefore++;
-      printf("parent: %s value : %s\n", parent->name, value);
-
-    int result = strcmp(parent->name, value);
-
-   
-    if (result == -1) {
-
-      item_before(parent->left, value);
-
+    if(it->left) {
+        count = count_items_before(it->left, item, count);
+    }
+    if(strcmp(it->name, item) < 0)
+    {
+        count++;
+    }
+    if(it->right)
+    {
+        count = count_items_before(it->right, item, count);
     }
 
-    if (result == 1) {
-
-      item_before(parent->right,value);
-    }
-
-    if (result == 0) {
-
-          return item_before(parent->left , value) + item_before(parent->right, value);
-
-    }
-
-
-
-  }
-  
-
-
-
-
-    // if(parent->left) {
-    // nitemsBefore++;
-    // printf("descending left...\n");
-
-    // item_before(parent->left, value);
-    // }
-
-
-    // if(parent->right) {
-    // nitemsBefore++;
-    // printf("descending right...\n");
-    // item_before(parent->right, value);
-    // }
-  
-
-  // if (strcmp(parent->name, value) == 0) {
-  //   printf("its true:\n");
-  //   return nitemsBefore;
-  // }
-
-  // if (strcmp(parent->name, value) != 0) {
-    
-  //   if(parent->left) {
-  //   nitemsBefore++;
-  //   printf("descending left...\n");
-
-  //   item_before(parent->left, value);
-  // }
-
-
-  //   if(parent->right) {
-  //   nitemsBefore++;
-  //   printf("descending right...\n");
-  //   item_before(parent->right, value);
-  //   }
-  
-  // }
-
-
-
-
-
-
+    return count; 
 }
 
 
@@ -341,6 +267,59 @@ item_node *bst_insert_tree_bottom(item_node *parent, item_node *new_node) {
 
 // }
 
+// int find_left_height(item_node *parent, int count) {
+
+
+
+//   if(parent == NULL) {
+//     return count;
+//   } 
+//   else if (parent->left) {
+//     count++;
+//     count = find_left_height(parent->left, count);
+
+//   }
+//   printf("parent %s\n", parent->name);
+
+//   printf("left count: %d\n", count);
+//   return count;
+
+// }
+
+
+// int find_right_height(item_node *parent, int count) {
+
+
+
+//   if(parent == NULL) {
+//     return count;
+//   }
+//   else if (parent->right) {
+    
+//     count++;
+//     count = find_right_height(parent->right, count);
+
+//   }
+//   printf("parent %s\n", parent->name);
+
+//   return count;  
+
+// }
+
+int findHeight(item_node *aNode) {
+    if (aNode == NULL) {
+        return -1;
+    }
+
+    int lefth = findHeight(aNode->left);
+    int righth = findHeight(aNode->right);
+
+    if (lefth > righth) {
+        return lefth + 1;
+    } else {
+        return righth + 1;
+    }
+}
 
 void get_n_line(FILE *ifp, int* ntrees, int* nitems, int* ncommands) {
 
@@ -381,9 +360,7 @@ int main(void)
 
     int count;
 
-    char command_string[64];
-    char tree_command_string[64];
-    char item_command_string[32];
+
 
 
     // gets our n values for ntrees, nitems, and ncommands;
@@ -452,7 +429,7 @@ int main(void)
     printf("===Processing Commands===\n");
 
     for (i = 0; i < ncommands; i++) {
-        get_next_nonblank_line(ifp, s, 62);
+        get_next_nonblank_line(ifp, s, 63);
 
         char *command = strtok(s, " ");
         char *tree_command_string = strtok(NULL, " ");
@@ -462,20 +439,27 @@ int main(void)
 
         if (strcmp(command, "search") == 0) {
 
-
+            // find fish animal whatever
             tree_name_node *mainTree = search_tree_name(t1, tree_command_string);
 
+            if (mainTree == NULL) {
+                printf("%s does not exist\n", tree_command_string);
+            }
+            else if (mainTree != NULL) {
+              
             item_node *search_item = search_item_node(mainTree->theTree, item_command_string);
 
-            if (search_item == NULL) {
+              if (search_item == NULL) {
 
                 printf("%s not found in %s\n", item_command_string, tree_command_string);
 
-            }
+              }
 
-            else {
-            printf("%d %s found in %s\n", search_item->count, search_item->name, tree_command_string);
+              else {
 
+              printf("%d %s found in %s\n", search_item->count, search_item->name, tree_command_string);
+
+              }
 
             }
 
@@ -484,18 +468,42 @@ int main(void)
 
             tree_name_node *mainTree = search_tree_name(t1, tree_command_string);
 
-            int nitemBefore = item_before(mainTree->theTree, item_command_string);
+            int nitemBefore = count_items_before(mainTree->theTree, item_command_string, 0);
             
             printf("item_before %s: %d\n", item_command_string, nitemBefore);
-            // printf("item_before command\n");
-
-            print_tree_inorder(mainTree->theTree, 0);
+            
 
         }
         else if (strcmp(command, "height_balance") == 0) {
 
-            // printf("height_balance command\n");
+          int leftHeight;
+          int rightHeight;
+          int difference;
 
+          tree_name_node *mainTree = search_tree_name(t1, tree_command_string);
+
+          leftHeight = findHeight(mainTree->theTree->left);
+
+          rightHeight = findHeight(mainTree->theTree->right);
+
+          difference = rightHeight - leftHeight;
+
+          if (difference == 0) {          
+            
+            printf("%s: left height %d, right height %d, difference %d, balanced\n", tree_command_string, leftHeight, rightHeight, difference);
+          }
+
+          else {
+
+          printf("%s: left height %d, right height %d, difference %d, not balanced\n", tree_command_string, leftHeight,rightHeight, difference);
+
+          }
+          
+
+
+
+          
+          
 
 
         }
