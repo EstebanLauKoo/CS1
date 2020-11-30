@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include "leak_detector_c.h"
 
 struct item_node_struct
 {
@@ -53,58 +53,89 @@ void get_next_nonblank_line(FILE *ifp, char *s, int max_length)
   }
 }
 
-void print_tree_inorder_item_node(item_node *t)
+void print_tree_inorder_item_node(FILE *ofp, item_node *t)
 {
   if (t->left)
   {
 
-    print_tree_inorder_item_node(t->left);
+    print_tree_inorder_item_node(ofp, t->left);
   }
 
-  printf("%s ", t->name);
+  fprintf(ofp, "%s ", t->name);
 
   if (t->right)
   {
 
-    print_tree_inorder_item_node(t->right);
+    print_tree_inorder_item_node(ofp, t->right);
   }
 }
 
-void print_tree_inorder_second(tree_name_node *t, int depth)
+void print_tree_inorder_second(FILE *ofp, tree_name_node *t)
 {
   if (t->left)
   {
-    printf("descending left\n");
-    print_tree_inorder_second(t->left, depth + 1);
+
+    print_tree_inorder_second(ofp, t->left);
   }
 
-  printf("===%s===\n", t->treeName);
+  fprintf(ofp, "===%s===\n", t->treeName);
 
-  print_tree_inorder_item_node(t->theTree);
-  printf("\n");
+  print_tree_inorder_item_node(ofp, t->theTree);
+  fprintf(ofp, "\n");
 
   if (t->right)
   {
-    printf("descending right\n");
 
-    print_tree_inorder_second(t->right, depth + 1);
+    print_tree_inorder_second(ofp, t->right);
   }
 }
 
-
-void print_tree_inorder_first(tree_name_node *t, int depth)
+void print_tree_inorder_first(FILE *ofp, tree_name_node *t)
 {
   if (t->left)
   {
-    print_tree_inorder_first(t->left, depth + 1);
+    print_tree_inorder_first(ofp, t->left);
   }
 
-  printf("%s ", t->treeName);
+  fprintf(ofp, "%s ", t->treeName);
 
   if (t->right)
   {
-    print_tree_inorder_first(t->right, depth + 1);
+    print_tree_inorder_first(ofp, t->right);
   }
+}
+
+void freeItem(item_node *parent) {
+
+  if (parent->left) {
+    freeItem(parent->left);
+  }
+
+  free(parent);
+
+  if (parent->right) {
+    freeItem(parent->right);
+  }
+
+}
+
+void freeStuff(tree_name_node *parent) {
+
+  if (parent->left)
+  {
+    freeStuff(parent->left);
+  }
+
+  freeItem(parent->theTree);
+  free(parent);
+
+  if (parent->right)
+  {
+    freeStuff(parent->right);
+  }
+
+
+
 }
 
 tree_name_node *new_tree_node(char *name)
@@ -271,8 +302,6 @@ item_node *bst_insert_tree_bottom(item_node *parent, item_node *new_node)
   }
 }
 
-
-
 int findHeight(item_node *parent)
 {
   if (parent == NULL)
@@ -313,13 +342,12 @@ int tree_count(item_node *parent, int totalCount)
   return totalCount;
 }
 
-
 item_node *find_minimum(item_node *parent)
 {
   if (parent == NULL)
     return NULL;
-  else if (parent->left != NULL)       
-    return find_minimum(parent->left); 
+  else if (parent->left != NULL)
+    return find_minimum(parent->left);
   return parent;
 }
 
@@ -369,11 +397,10 @@ tree_name_node *find_minimum_tree(tree_name_node *parent)
 {
   if (parent == NULL)
     return NULL;
-  else if (parent->left != NULL)            
-    return find_minimum_tree(parent->left); 
+  else if (parent->left != NULL)
+    return find_minimum_tree(parent->left);
   return parent;
 }
-
 
 tree_name_node *delete_tree(tree_name_node *parent, char *value)
 {
@@ -400,6 +427,8 @@ tree_name_node *delete_tree(tree_name_node *parent, char *value)
         temp = parent->right;
       else
         temp = parent->left;
+
+      freeItem(parent->theTree);  
       free(parent);
       return temp;
     }
@@ -439,8 +468,19 @@ void get_n_line(FILE *ifp, int *ntrees, int *nitems, int *ncommands)
   *ncommands = integerNCommands;
 }
 
+void traverse_in_order(FILE *ofp, tree_name_node *parent)
+{
+
+  print_tree_inorder_first(ofp, parent);
+
+  fprintf(ofp, "\n");
+
+  print_tree_inorder_second(ofp, parent);
+}
 int main(void)
 {
+  atexit(report_mem_leak);
+
   FILE *ofp;
   FILE *ifp;
 
@@ -508,13 +548,9 @@ int main(void)
     }
   }
 
-  print_tree_inorder_first(t1, 0);
+  traverse_in_order(ofp, t1);
 
-  printf("\n");
-
-  print_tree_inorder_second(t1, 0);
-
-  printf("===Processing Commands===\n");
+  fprintf(ofp, "===Processing Commands===\n");
 
   for (i = 0; i < ncommands; i++)
   {
@@ -532,7 +568,7 @@ int main(void)
 
       if (mainTree == NULL)
       {
-        printf("%s does not exist\n", tree_command_string);
+        fprintf(ofp, "%s does not exist\n", tree_command_string);
       }
       else if (mainTree != NULL)
       {
@@ -542,15 +578,17 @@ int main(void)
         if (search_item == NULL)
         {
 
-          printf("%s not found in %s\n", item_command_string, tree_command_string);
+          fprintf(ofp, "%s not found in %s\n", item_command_string, tree_command_string);
         }
 
         else
         {
 
-          printf("%d %s found in %s\n", search_item->count, search_item->name, tree_command_string);
+          fprintf(ofp, "%d %s found in %s\n", search_item->count, search_item->name, tree_command_string);
         }
       }
+
+
     }
     else if (strcmp(command, "item_before") == 0)
     {
@@ -559,7 +597,7 @@ int main(void)
 
       int nitemBefore = count_items_before(mainTree->theTree, item_command_string, 0);
 
-      printf("item_before %s: %d\n", item_command_string, nitemBefore);
+      fprintf(ofp, "item_before %s: %d\n", item_command_string, nitemBefore);
     }
     else if (strcmp(command, "height_balance") == 0)
     {
@@ -579,13 +617,13 @@ int main(void)
       if (difference == 0)
       {
 
-        printf("%s: left height %d, right height %d, difference %d, balanced\n", tree_command_string, leftHeight, rightHeight, difference);
+        fprintf(ofp, "%s: left height %d, right height %d, difference %d, balanced\n", tree_command_string, leftHeight, rightHeight, difference);
       }
 
       else
       {
 
-        printf("%s: left height %d, right height %d, difference %d, not balanced\n", tree_command_string, leftHeight, rightHeight, difference);
+        fprintf(ofp, "%s: left height %d, right height %d, difference %d, not balanced\n", tree_command_string, leftHeight, rightHeight, difference);
       }
     }
     else if (strcmp(command, "count") == 0)
@@ -596,7 +634,7 @@ int main(void)
 
       int totalCount = tree_count(mainTree->theTree, 0);
 
-      printf("%s count %d\n", tree_command_string, totalCount);
+      fprintf(ofp, "%s count %d\n", tree_command_string, totalCount);
     }
     else if (strcmp(command, "delete") == 0)
     {
@@ -607,7 +645,7 @@ int main(void)
 
       delete (mainTree->theTree, item_command_string);
 
-      printf("%s deleted from %s\n", item_command_string, tree_command_string);
+      fprintf(ofp, "%s deleted from %s\n", item_command_string, tree_command_string);
 
       // print_tree_inorder_second(t1, 0);
     }
@@ -617,15 +655,16 @@ int main(void)
       tree_name_node *mainTree = search_for_name_node(t1, tree_command_string);
 
       delete_tree(t1, tree_command_string);
-      printf("%s deleted\n", tree_command_string);
-
-
+      fprintf(ofp, "%s deleted\n", tree_command_string);
     }
     else
     {
       printf("incorrect command\n");
     }
   }
+
+
+  freeStuff(t1);
 
   fclose(ifp);
   fclose(ofp);
